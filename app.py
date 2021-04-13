@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, redirect, render_template
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import Session
 import os
 
@@ -49,11 +49,9 @@ Base.metadata.create_all(engine)
 # ----------------------------------
 # Base.metadata.drop_all(engine)
 
-configs={'API_KEY': 'SECRET'}
-
-@app.route('/javascript')
-def template():
-	return render_template('index.html', data_from_flask=configs)
+# @app.route('/javascript')
+# def template():
+# 	return render_template('index.html', data_from_flask=configs)
 
 @app.route('/')
 def index(): 
@@ -64,19 +62,28 @@ def index():
 	results=session.query(Log.jobname, Log.processed, Log.bikes, Log.size).all()
 	session.close()
 	# return 'Welcome'
-	return jsonify([[each_field for each_field in each_log] for each_log in results])
+	# return jsonify([[each_field for each_field in each_log] for each_log in results])
+	return render_template('index.html')
 
-@app.route('/get_data')
-def get_data():
-	# Create a Session Object to Connect to DB
-	# ----------------------------------
-	# Session is a temporary binding to our DB
+# @app.route('/get_data')
+# def get_data():
+# 	# Create a Session Object to Connect to DB
+# 	# ----------------------------------
+# 	# Session is a temporary binding to our DB
+# 	session=Session(engine)
+# 	new_log=Log(**fetch.get_bike_data())
+# 	session.add(new_log)
+# 	session.commit()
+# 	session.close()
+# 	return redirect("/")
+
+@app.route('/api/jobs')
+def jobs_status():
 	session=Session(engine)
-	new_log=Log(**fetch.get_bike_data())
-	session.add(new_log)
-	session.commit()
+	results=session.query(Log.processed, Log.bikes).order_by(desc(Log.processed)).limit(200).all()
 	session.close()
-	return redirect("/")
+	# return jsonify([each_result['processed'] for each_result in results])
+	return jsonify([{'processed': each_result[0], 'bikes': each_result[1]} for each_result in results])
 
 if __name__=='__main__': 
 	app.run(debug=True)
