@@ -10,15 +10,25 @@ from models import *
 
 # USERNAME='postgres'
 # PASS='postgres'
-
 # SQLALCHEMY_DATABASE_URI=f'postgresql://{USERNAME}:{PASS}@localhost:5432/request_scheduler_heroku_db'
+
 # SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL']
 SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
 
+# Create Database Connection
+# ----------------------------------
+# Creates a connection to our DB
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
+
+# Create a "Metadata" Layer That Abstracts our SQL Database
+# ----------------------------------
+# Create (if not already in existence) the tables associated with our classes.
 Base.metadata.create_all(engine)
 
 def get_bike_data():
+    # Create a Session Object to Connect to DB
+    # ----------------------------------
+    # Session is a temporary binding to our DB
     session=Session(engine)
     # request url
     request_url='https://gbfs.spin.pm/api/gbfs/v1/washington_dc/free_bike_status'

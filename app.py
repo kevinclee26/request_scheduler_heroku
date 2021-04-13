@@ -1,22 +1,19 @@
-from flask import Flask, jsonify, redirect
+from flask import Flask, jsonify, redirect, render_template
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 import os
 
 import fetch
 
-# import models
-# from models import Log, Base
 from models import *
 
 # from flask_sqlalchemy import SQLAlchemy
 # Imports the method used for connecting to DBs
-# from sqlalchemy import create_engine
 
 # USERNAME='postgres'
 # PASS='postgres'
-
 # SQLALCHEMY_DATABASE_URI=f'postgresql://{USERNAME}:{PASS}@localhost:5432/request_scheduler_heroku_db'
+
 # SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL']
 SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
 
@@ -30,6 +27,7 @@ app=Flask(__name__)
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # db=SQLAlchemy(app)
+
 # The _BoundDeclarativeMeta metaclass is a subclass of SQLAlchemy's DeclarativeMeta, 
 # it simply adds support for computing a default value for __tablename__ (the table name) and also to handle binds.
 # The base.query property enables Flask-SQLAlchemy based models to access a query object as Model.query instead of SQLAlchemy's session.query(Model).
@@ -40,16 +38,22 @@ app=Flask(__name__)
 # ----------------------------------
 # Creates a connection to our DB
 engine = create_engine(SQLALCHEMY_DATABASE_URI)
-# conn = engine.connect()
 
 # Create a "Metadata" Layer That Abstracts our SQL Database
 # ----------------------------------
 # Create (if not already in existence) the tables associated with our classes.
-# db.create_all()
 Base.metadata.create_all(engine)
+# db.create_all()
+
 # Use this to clear out the db
 # ----------------------------------
 # Base.metadata.drop_all(engine)
+
+configs={'API_KEY': 'SECRET'}
+
+@app.route('/javascript')
+def template():
+	return render_template('index.html', data_from_flask=configs)
 
 @app.route('/')
 def index(): 
