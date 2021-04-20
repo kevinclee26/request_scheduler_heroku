@@ -12,6 +12,12 @@ from models import *
 # PASS='postgres'
 # SQLALCHEMY_DATABASE_URI=f'postgresql://{USERNAME}:{PASS}@localhost:5432/request_scheduler_heroku_db'
 
+# session.close() will give the connection back to the connection pool of Engine 
+# and doesn't close the connection.
+# engine.dispose() will close all connections of the connection pool.
+# Engine will not use connection pool if you set poolclass=NullPool. So the 
+# connection (SQLAlchemy session) will close directly after session.close().
+
 # SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL']
 SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
 
