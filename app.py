@@ -15,7 +15,7 @@ from models import *
 # SQLALCHEMY_DATABASE_URI=f'postgresql://{USERNAME}:{PASS}@localhost:5432/request_scheduler_heroku_db'
 
 # SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL']
-SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
+SQLALCHEMY_DATABASE_URI=os.environ.get('HEROKU_POSTGRESQL_BRONZE_URL').replace("://", "ql://", 1)
 
 request_url='https://gbfs.spin.pm/api/gbfs/v1/washington_dc/free_bike_status'
 
